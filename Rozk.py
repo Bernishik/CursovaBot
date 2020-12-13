@@ -11,15 +11,24 @@ class Rozk:
 
     def __init__(self):
         self.db = DataBase()
+        self.clear_tmp()
         self.load_data()
 
     def clear_tmp(self):
-        files = glob.glob('./tmp/*')
-        for f in files:
-            os.remove(f)
-        files = glob.glob('./rozk/*')
-        for f in files:
-            os.remove(f)
+        dirpath = "./rozk"
+        for filename in os.listdir(dirpath):
+            filepath = os.path.join(dirpath, filename)
+            try:
+                shutil.rmtree(filepath)
+            except OSError:
+                os.remove(filepath)
+        dirpath = "./tmp"
+        for filename in os.listdir(dirpath):
+            filepath = os.path.join(dirpath, filename)
+            try:
+                shutil.rmtree(filepath)
+            except OSError:
+                os.remove(filepath)
 
     def load_data(self):
             for group in  self.db.get_group_list():
@@ -60,13 +69,7 @@ class Rozk:
         return self.db.get_group_list_by_kurs(kurs)
 
 
-dirpath="./tmp"
-for filename in os.listdir(dirpath):
-    filepath = os.path.join(dirpath, filename)
-    try:
-        shutil.rmtree(filepath)
-    except OSError:
-        os.remove(filepath)
+
 
 # db = DataBase()
 # print(db.get_rozk("Fep22", "monday"))
