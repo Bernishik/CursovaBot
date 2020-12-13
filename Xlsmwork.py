@@ -1,19 +1,29 @@
+import os
 from datetime import time
+
+
 import openpyxl
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Fill, Alignment
-from db import DataBase
-import excel2img
 
 
-class Xmlwork:
-    def __init__(self, data):
+class Xlsmwork:
+
+    def __init__(self):
         self.wb = openpyxl.Workbook()
-        self.wb.create_sheet(title='Первый лист', index=0)
-        self.sheet = self.wb['Первый лист']
-        self.doubled_data =[]
-        self.fill_data(data)
-        self.setting_up()
+
+
+    def fill_full_rozk(self,data):
+        # отримує масив даних з розкладом, під кожен день створює лист на якому будуть дані
+        for day in data:
+            self.wb.create_sheet(title=day['day'],)
+            self.sheet = self.wb[day['day']]
+            self.doubled_data = []
+            self.fill_data(day)
+            self.setting_up()
+        self.sheet = self.wb['Sheet']
+        self.wb.remove_sheet(self.sheet)
+        return len(self.wb.sheetnames)
 
     def fill_data(self, data):
         self.cur_row = 1
@@ -82,8 +92,15 @@ class Xmlwork:
 
             ####
 
-    def save_file(self, name):
-        self.wb.save(name)
+    def save_file(self, filename):
+        path = os.path.join(os.path.abspath("tmp"), filename)
+        self.wb.save(path)
+        return path
+
+    @staticmethod
+    def get_sheet_len(path):
+        wb =openpyxl.load_workbook(path)
+        return wb.sheetnames
 
     par_time = {
         1: {
@@ -120,45 +137,4 @@ class Xmlwork:
         }
     }
 
-
-db = DataBase()
-# print(db.get_rozk("Fep22", "monday"))
-data = {
-    "1": {
-        "always": "",
-        "doubled": {
-            "even": "matan123",
-            "odd": "ывпыв"
-        }
-
-    },
-    "2": {"always": "kek",
-          "doubled": None},
-    "3": {"always":"Англійська",
-          "doubled": None},
-    "4": {"always":"Коман",
-            "doubled": None
-          },
-    "5": {"always":"",
-            "doubled": None
-          },
-    "6": {"always":"Бази Даних",
-            "doubled": None
-          },
-    "7":{"always":"",
-            "doubled": None
-          },
-    "8":{"always":"",
-            "doubled": None
-          },
-    "group": "ФеП-21",
-    "day": "Вівторок"
-
-}
-
-work = Xmlwork(db.get_rozk("fep21","Вівторок"))
-# work = Xmlwork(data)
-work.save_file("example.xlsx")
-#
-excel2img.export_img("example.xlsx", "1.png", "Первый лист")
 

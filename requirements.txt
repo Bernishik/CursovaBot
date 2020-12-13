@@ -2,4 +2,7 @@ pyTelegramBotAPI==3.7.3
 python-dotenv==0.15.0
 requests==2.24.0
 Flask
+openpyxl
+pymongo
+excel2img
 
